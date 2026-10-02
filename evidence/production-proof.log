@@ -1,0 +1,45 @@
+./composer.json is valid
+
+   INFO  Application key set successfully.  
+
+
+   INFO  Preparing database.  
+
+  Creating migration table ....................................... 6.25ms DONE
+
+   INFO  Running migrations.  
+
+  0001_01_01_000000_create_users_table .......................... 12.75ms DONE
+  0001_01_01_000001_create_cache_table ........................... 7.56ms DONE
+  0001_01_01_000002_create_jobs_table ............................ 8.03ms DONE
+  2026_01_01_000001_add_catalog_administrator_flag ............... 2.37ms DONE
+  2026_01_01_000002_create_personal_access_tokens_table .......... 8.94ms DONE
+  2026_01_02_000000_create_brands_table .......................... 7.01ms DONE
+  2026_01_02_000001_create_categories_table ..................... 20.43ms DONE
+  2026_01_02_000002_create_regions_table ......................... 4.87ms DONE
+  2026_01_02_000003_create_products_table ....................... 12.72ms DONE
+  2026_01_02_000004_create_user_brand_permissions_table .......... 3.82ms DONE
+  2026_01_02_000005_create_user_category_permissions_table ....... 4.90ms DONE
+  2026_01_02_000006_create_user_product_permissions_table ........ 4.66ms DONE
+  2026_01_02_000007_create_catalog_permission_states_table ....... 2.50ms DONE
+
+
+   INFO  Configuration cached successfully.  
+
+
+   INFO  Routes cached successfully.  
+
+
+   INFO  Events cached successfully.  
+
+{
+    "foundry_installed": false,
+    "catalog_version": "0.1.0",
+    "runtime_packages": "independent mirrored copies",
+    "http_create": 201,
+    "http_read": 200,
+    "sku": "PRODUCTION-fd9e5fa1",
+    "application_marker": null,
+    "configuration_cached": true,
+    "routes_cached": true
+}

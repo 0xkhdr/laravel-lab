@@ -1,0 +1,73 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }}\Http\Controllers;
+
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Routing\Controller;
+use {{ namespace }}\Http\Requests\Category\CreateCategoryRequest;
+use {{ namespace }}\Http\Requests\Category\ListCategoriesRequest;
+use {{ namespace }}\Http\Requests\Category\UpdateCategoryRequest;
+use {{ namespace }}\Http\Resources\CategoryResource;
+use Raid\Catalog\Actions\Category\CreateCategoryAction;
+use Raid\Catalog\Actions\Category\DeleteCategoryAction;
+use Raid\Catalog\Actions\Category\FindCategoryAction;
+use Raid\Catalog\Actions\Category\RetrievePaginateCategoryAction;
+use Raid\Catalog\Actions\Category\UpdateCategoryAction;
+
+/**
+ * CategoryController
+ *
+ * Handles the full category lifecycle — list, create, show, update, delete —
+ * by delegating each operation to the corresponding Catalog Foundation action.
+ *
+ * Pattern: thin HTTP adapter. No business logic lives here.
+ *
+ * @see CreateCategoryAction
+ * @see UpdateCategoryAction
+ * @see FindCategoryAction
+ * @see DeleteCategoryAction
+ * @see RetrievePaginateCategoryAction
+ */
+class CategoryController extends Controller
+{
+    public function index(ListCategoriesRequest $request, RetrievePaginateCategoryAction $action): AnonymousResourceCollection
+    {
+        $validated = $request->validated();
+        $perPage = (int) ($validated['per_page'] ?? 15);
+
+        $categories = $action->handle(perPage: $perPage);
+
+        return CategoryResource::collection($categories);
+    }
+
+    public function store(CreateCategoryRequest $request, CreateCategoryAction $action): CategoryResource
+    {
+        $category = $action->handle($request->validated());
+
+        return new CategoryResource($category);
+    }
+
+    public function show(string $id, FindCategoryAction $action): CategoryResource
+    {
+        $category = $action->handle(conditions: ['id' => $id]);
+
+        return new CategoryResource($category);
+    }
+
+    public function update(UpdateCategoryRequest $request, string $id, UpdateCategoryAction $action): CategoryResource
+    {
+        $category = $action->handle($id, $request->validated());
+
+        return new CategoryResource($category);
+    }
+
+    public function destroy(string $id, DeleteCategoryAction $action): JsonResponse
+    {
+        $action->handle(ids: [$id]);
+
+        return response()->json(['message' => 'Category deleted successfully.']);
+    }
+}

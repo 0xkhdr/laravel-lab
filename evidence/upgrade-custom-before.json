@@ -1,0 +1,4 @@
+{
+  "app-modules/catalog/src/Http/Resources/ProductResource.php": "c1782426338950dd0fb62a12d7c726aa8efcde6f210f5a855d2fa9dc5759af33",
+  "app-modules/catalog/src/Policies/ApplicationSku.php": "f2450360522adf060400e1435e593d2421ae62b4d72b8ce5299233ab65894f15"
+}

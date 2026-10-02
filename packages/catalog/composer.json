@@ -1,0 +1,64 @@
+{
+    "name": "raid/catalog",
+    "description": "Raid Catalog for Laravel 12",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "~8.4.0",
+        "laravel/framework": "^12.0",
+        "raid/pillar": "dev-main",
+        "spatie/laravel-translatable": "^6.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "laravel/pint": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Raid\\Catalog\\": "src/",
+            "Raid\\Catalog\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Raid\\Catalog\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Raid\\Catalog\\CatalogServiceProvider"
+            ]
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "versions": {
+                    "raid/pillar": "dev-main",
+                    "raid/catalog": "dev-main",
+                    "raid/foundry": "dev-main"
+                }
+            }
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "lint": "vendor/bin/pint --test"
+    },
+    "authors": [
+        {
+            "name": "RAID Foundation",
+            "email": "dev@raid.com"
+        }
+    ]
+}

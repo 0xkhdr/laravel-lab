@@ -1,0 +1,26 @@
+{
+    "name": "raid/source-characterization",
+    "description": "Read-only reference characterization",
+    "license": "MIT",
+    "require": {
+        "php": "~8.4.0",
+        "laravel/framework": "^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "laravel/pint": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Frontier\\Actions\\": "/reference/pkgs/frontier/action/src/",
+            "Frontier\\Repositories\\": "/reference/pkgs/frontier/repository/src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}

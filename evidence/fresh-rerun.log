@@ -1,0 +1,494 @@
+{
+    "recipe": "catalog",
+    "blueprint": "catalog.standard",
+    "recipe_version": "1.1.0",
+    "blueprint_version": "1.1.0",
+    "module": "Catalog",
+    "namespace": "Modules\\Catalog",
+    "module_path": "app-modules/catalog",
+    "prerequisites": [
+        "Composer-installed runtime packages",
+        "PHP 8.4 / Laravel 12",
+        "UUID users schema and administrator flag",
+        "composer dump-autoload after configuration"
+    ],
+    "operations": [
+        {
+            "kind": "generate",
+            "template_identity": "catalog:composer.json",
+            "id": "69debd511ee3c0ffe0a8f5a9b46c6cdae3adbdd6c71e4e0698cda139ade145b9",
+            "path": "app-modules/catalog/composer.json",
+            "expected_previous_hash": "27d97646796507766d0308495e2c5617e6bd168729aa976c121061c128d5aa80",
+            "planned_hash": "27d97646796507766d0308495e2c5617e6bd168729aa976c121061c128d5aa80",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:schema:brands:1",
+            "id": "45aa9c9ca4d04c3221200c0326175612d31e7abdf72eefb883ada854b8502fff",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000000_create_brands_table.php",
+            "expected_previous_hash": "b296b42395aa998337d854108f21b2a8022ce20e5a9a183e6132f66e595e0477",
+            "planned_hash": "b296b42395aa998337d854108f21b2a8022ce20e5a9a183e6132f66e595e0477",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:schema:categories:1",
+            "id": "cbe4e06c9243270ded53c25cef6cfbfac092cddee2e8df92308d3db268922402",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000001_create_categories_table.php",
+            "expected_previous_hash": "2ed1d993bf772755b79b0b02a5de8f1bf77de4dd524b416a27408f00139a5ae4",
+            "planned_hash": "2ed1d993bf772755b79b0b02a5de8f1bf77de4dd524b416a27408f00139a5ae4",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:schema:regions:1",
+            "id": "e073077dd20247bbe92769da8f47dd07c0fd064874f8ac26eb504f42ec1b115a",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000002_create_regions_table.php",
+            "expected_previous_hash": "66c4ca2110408d09c5c4cbedb974e91b8106ca9c3f5aa10c30e0335cd666ad5e",
+            "planned_hash": "66c4ca2110408d09c5c4cbedb974e91b8106ca9c3f5aa10c30e0335cd666ad5e",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:schema:products:1",
+            "id": "bb01903c3980fff0106044af0ac0c496e55de7b8cdabedb70b4d2eeda4dd4ce9",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000003_create_products_table.php",
+            "expected_previous_hash": "02c3260d0344152a7d87c585ebe80b799e2712c0d266a79206e16db6df2ca47c",
+            "planned_hash": "02c3260d0344152a7d87c585ebe80b799e2712c0d266a79206e16db6df2ca47c",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:schema:user_brand_permissions:1",
+            "id": "3d07945a16d636675726290af065000088168cb02211b04105166309dac46659",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000004_create_user_brand_permissions_table.php",
+            "expected_previous_hash": "93f4fac916ce7ce6dc5f1cb5092197a0d991c1df16f3c3f81e1fa034f92b4e40",
+            "planned_hash": "93f4fac916ce7ce6dc5f1cb5092197a0d991c1df16f3c3f81e1fa034f92b4e40",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:schema:user_category_permissions:1",
+            "id": "0ef7ef3a1364755b9087ebf48e8a8672275fcc45b9432d7957c4ba07cc02bc7c",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000005_create_user_category_permissions_table.php",
+            "expected_previous_hash": "ac1464027ff5b73a67301f2d1f1fc8bcd6e39e7fda4807f5bd3788230aa06d05",
+            "planned_hash": "ac1464027ff5b73a67301f2d1f1fc8bcd6e39e7fda4807f5bd3788230aa06d05",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:schema:user_product_permissions:1",
+            "id": "c1101dd6f48b205cab37f6a3d46994a124cc8f1695c76a62c2e172d77442156f",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000006_create_user_product_permissions_table.php",
+            "expected_previous_hash": "ad97a8becb5d2c5bc4bf7872525835ee28a3ce5aae3ef7fa02307bbdbbad3e11",
+            "planned_hash": "ad97a8becb5d2c5bc4bf7872525835ee28a3ce5aae3ef7fa02307bbdbbad3e11",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:schema:catalog_permission_states:1",
+            "id": "c9b1099d8202f1c3361d1dac27c7e52be651d2751974c12aefa889cab7092e60",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000007_create_catalog_permission_states_table.php",
+            "expected_previous_hash": "698850c20def53f48fb04455b76db7b200b63f60258b7aa793480a7368aafe44",
+            "planned_hash": "698850c20def53f48fb04455b76db7b200b63f60258b7aa793480a7368aafe44",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:routes/catalog-routes.php",
+            "id": "9c3ed9820cff4c0d2e85e7f316417e28f9025fb641c3106d8c934dcbc7e0a9a4",
+            "path": "app-modules/catalog/routes/catalog-routes.php",
+            "expected_previous_hash": "28e34baacece0c9fd4abca694e6e6b16a8b362bcbb5171d539950feff53129b2",
+            "planned_hash": "28e34baacece0c9fd4abca694e6e6b16a8b362bcbb5171d539950feff53129b2",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Controllers/BrandController.php",
+            "id": "fd7515c164f52683a84c1a4626a2e80e90f8a3150013ff4c0a0df739598d2416",
+            "path": "app-modules/catalog/src/Http/Controllers/BrandController.php",
+            "expected_previous_hash": "3f24c5cb2c32dc04833fd624104200505140aea4e5c8c7ec210f919e3dc2ed54",
+            "planned_hash": "3f24c5cb2c32dc04833fd624104200505140aea4e5c8c7ec210f919e3dc2ed54",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Controllers/CategoryController.php",
+            "id": "ad626e33bd70797bafb85af303db6648d1d4de4a1db8741fa0b406c86c7b934c",
+            "path": "app-modules/catalog/src/Http/Controllers/CategoryController.php",
+            "expected_previous_hash": "091a2c07bc1b30d281c05c2b175c76ff8e45cd656db14009c4b000f706737b88",
+            "planned_hash": "091a2c07bc1b30d281c05c2b175c76ff8e45cd656db14009c4b000f706737b88",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Controllers/ProductController.php",
+            "id": "e9b53cb412128478c7e1af757527bf41939566b964638e0f261c17e80c2940d0",
+            "path": "app-modules/catalog/src/Http/Controllers/ProductController.php",
+            "expected_previous_hash": "bc297eebb2cdb2c9df208f9dc925e51e03a22bb83c5814ef5dfaafdd6c4efaa4",
+            "planned_hash": "bc297eebb2cdb2c9df208f9dc925e51e03a22bb83c5814ef5dfaafdd6c4efaa4",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Controllers/RegionController.php",
+            "id": "1ae8ce66ec96a2c625e4775917214d52e6ed9323f08e3306b2de76cc5ecc3fab",
+            "path": "app-modules/catalog/src/Http/Controllers/RegionController.php",
+            "expected_previous_hash": "6bc73bd77bb61a569c26a284a15fc60de138a4e7887aa72ff72f112db1bee619",
+            "planned_hash": "6bc73bd77bb61a569c26a284a15fc60de138a4e7887aa72ff72f112db1bee619",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Requests/Brand/CreateBrandRequest.php",
+            "id": "75dd83590e84c49bff51b6876c2227312f802dca968840ebbd6db701c03f88ca",
+            "path": "app-modules/catalog/src/Http/Requests/Brand/CreateBrandRequest.php",
+            "expected_previous_hash": "57610bbbe21c0854b44744e311254f5f263b748135f507401a01d1da22d6b207",
+            "planned_hash": "57610bbbe21c0854b44744e311254f5f263b748135f507401a01d1da22d6b207",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Requests/Brand/ListBrandsRequest.php",
+            "id": "0cd603ef75b0644f9bc5503556e5e84c2cb6f834108cf045b8ed9c0808bd989b",
+            "path": "app-modules/catalog/src/Http/Requests/Brand/ListBrandsRequest.php",
+            "expected_previous_hash": "4c49c88a409a2af5519a40264b5fe368425d2b9745a97a295e857a1ec4464c0b",
+            "planned_hash": "4c49c88a409a2af5519a40264b5fe368425d2b9745a97a295e857a1ec4464c0b",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Requests/Brand/UpdateBrandRequest.php",
+            "id": "3dd8c9da965f9a3f9b30ee90d17534c14a1f1b533b528e2405fd75a5bc959a83",
+            "path": "app-modules/catalog/src/Http/Requests/Brand/UpdateBrandRequest.php",
+            "expected_previous_hash": "78f64e4fdbad83290f4a99ce8b5e200bfc1cbb364de539794473e48e77cc16b1",
+            "planned_hash": "78f64e4fdbad83290f4a99ce8b5e200bfc1cbb364de539794473e48e77cc16b1",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Requests/Category/CreateCategoryRequest.php",
+            "id": "38a090249eb6ae5f6a68023c4ed31517a200fe8cdb7dabb27266c66bd6d623ef",
+            "path": "app-modules/catalog/src/Http/Requests/Category/CreateCategoryRequest.php",
+            "expected_previous_hash": "7bc405ffbd10cac1ed927815d29309c1d6bd271412b80b6f6654135cdd9d5389",
+            "planned_hash": "7bc405ffbd10cac1ed927815d29309c1d6bd271412b80b6f6654135cdd9d5389",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Requests/Category/ListCategoriesRequest.php",
+            "id": "77221c23895eda08f05e9fce4ddbe7a4f81b58bea248eeab999a341a68d0d2e8",
+            "path": "app-modules/catalog/src/Http/Requests/Category/ListCategoriesRequest.php",
+            "expected_previous_hash": "fff554ba6e17b5084ed583a65ff6137df3ff49404c0cdbd0735b98b906088df6",
+            "planned_hash": "fff554ba6e17b5084ed583a65ff6137df3ff49404c0cdbd0735b98b906088df6",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Requests/Category/UpdateCategoryRequest.php",
+            "id": "c90016eccda8566d6b7b1063a1c81deb98efc8c8e6180e8a3c9c8447c6e34393",
+            "path": "app-modules/catalog/src/Http/Requests/Category/UpdateCategoryRequest.php",
+            "expected_previous_hash": "eb4fc3a24965adb236346f533d188c0211f43d02301a1e3aa2f457ca8d486697",
+            "planned_hash": "eb4fc3a24965adb236346f533d188c0211f43d02301a1e3aa2f457ca8d486697",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Requests/Product/CreateProductRequest.php",
+            "id": "3ce34df44839548d6df066e2484192f5f0d35bc6cd480332df2c30a31a8f54c3",
+            "path": "app-modules/catalog/src/Http/Requests/Product/CreateProductRequest.php",
+            "expected_previous_hash": "1267d74c68e747330c200323e271833e839525e5c430409d07faeafdd6a2ac26",
+            "planned_hash": "1267d74c68e747330c200323e271833e839525e5c430409d07faeafdd6a2ac26",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Requests/Product/ListProductsRequest.php",
+            "id": "595e73d7f08f4b586d0961fd00ad6df928691a675d48807fb0a0c20797a500d3",
+            "path": "app-modules/catalog/src/Http/Requests/Product/ListProductsRequest.php",
+            "expected_previous_hash": "90cc6ea9b1e357a0ac3b5134194e31b3a83e585d471705b1fd366411fd923eb9",
+            "planned_hash": "90cc6ea9b1e357a0ac3b5134194e31b3a83e585d471705b1fd366411fd923eb9",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Requests/Product/UpdateProductRequest.php",
+            "id": "9e044a0baefb21c6312857b97225ee07720bc30064da0384f9b36b3f4ee412ba",
+            "path": "app-modules/catalog/src/Http/Requests/Product/UpdateProductRequest.php",
+            "expected_previous_hash": "b115775a3d340fa00645827f585191cb9d07c2ea7b3c7b614ff5ddad532203ad",
+            "planned_hash": "b115775a3d340fa00645827f585191cb9d07c2ea7b3c7b614ff5ddad532203ad",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Requests/Region/CreateRegionRequest.php",
+            "id": "11f3622d3c52afbc6907bcbca77f94bea54e86420a63876dd000fd0549011c50",
+            "path": "app-modules/catalog/src/Http/Requests/Region/CreateRegionRequest.php",
+            "expected_previous_hash": "49b3506e47be2fd42d403017b1ad3f4f6f6a863bbf42bb16e7f94f6e38fe0e98",
+            "planned_hash": "49b3506e47be2fd42d403017b1ad3f4f6f6a863bbf42bb16e7f94f6e38fe0e98",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Requests/Region/ListRegionsRequest.php",
+            "id": "2b9ac9c640318f8ef8aef735ca92551a8020559b78806df4fd44cd61d966f2a9",
+            "path": "app-modules/catalog/src/Http/Requests/Region/ListRegionsRequest.php",
+            "expected_previous_hash": "ebe11f8837f8f50bb50f80c21b3b34e7f5185425b5a8e36f479ef92f7c48e679",
+            "planned_hash": "ebe11f8837f8f50bb50f80c21b3b34e7f5185425b5a8e36f479ef92f7c48e679",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Requests/Region/UpdateRegionRequest.php",
+            "id": "26258fe4eca838db181d9240649efa7714dfc52bc4d3722e940d935d69056ff5",
+            "path": "app-modules/catalog/src/Http/Requests/Region/UpdateRegionRequest.php",
+            "expected_previous_hash": "dc0875ca59d0f1bcf5b60428957697c6eb0e42980f041189d80b2e5283f4a0d8",
+            "planned_hash": "dc0875ca59d0f1bcf5b60428957697c6eb0e42980f041189d80b2e5283f4a0d8",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Resources/BrandResource.php",
+            "id": "32719717f4dd879d86087b62c3650611806ff956d7dccac7701c4da7f68fc253",
+            "path": "app-modules/catalog/src/Http/Resources/BrandResource.php",
+            "expected_previous_hash": "908068f0c8e9735d53fb356fd7409873400abbbed26e7390988ae39fdc5d5972",
+            "planned_hash": "908068f0c8e9735d53fb356fd7409873400abbbed26e7390988ae39fdc5d5972",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Resources/CategoryResource.php",
+            "id": "462906f982dbdc0bb07af030d762e707e59e687537557882ec50117c33ceedcc",
+            "path": "app-modules/catalog/src/Http/Resources/CategoryResource.php",
+            "expected_previous_hash": "ee36b8e53e00c34a1962a01af20f8d4be4c0098f3f74f0a07a5fb5485c76e219",
+            "planned_hash": "ee36b8e53e00c34a1962a01af20f8d4be4c0098f3f74f0a07a5fb5485c76e219",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Resources/ProductResource.php",
+            "id": "1516a697575d9cde98362b5a5bdb7ca1a4835de680402e316ec2e2d8768f7206",
+            "path": "app-modules/catalog/src/Http/Resources/ProductResource.php",
+            "expected_previous_hash": "91d1ca8ff92c52ff6a459ee3658f4cde0d2b257c17b3d8522dc36a81c253ef70",
+            "planned_hash": "91d1ca8ff92c52ff6a459ee3658f4cde0d2b257c17b3d8522dc36a81c253ef70",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Http/Resources/RegionResource.php",
+            "id": "cc1b9c9278f93695cc3ed56a7421a13889fa3e20ecc63a4617acdb9c9bd91292",
+            "path": "app-modules/catalog/src/Http/Resources/RegionResource.php",
+            "expected_previous_hash": "32b1a655486ba5bb280c1473a66513c614229940d056e9983306ae2729abd5c0",
+            "planned_hash": "32b1a655486ba5bb280c1473a66513c614229940d056e9983306ae2729abd5c0",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Models/CatalogUser.php",
+            "id": "e7cd5248ebe5da9a2427ebdef3e5241407762edb9789bb1af359486b65e3cf27",
+            "path": "app-modules/catalog/src/Models/CatalogUser.php",
+            "expected_previous_hash": "a75f18b3fadfac8bd02c0053c3e0f8583bcd8c5c2e953523c5de6bc7854b84f4",
+            "planned_hash": "a75f18b3fadfac8bd02c0053c3e0f8583bcd8c5c2e953523c5de6bc7854b84f4",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Policies/ApplicationSku.php",
+            "id": "54e637ea4732712481d5671a399b2423940b212c3829becf5a81cd7a4b921ab2",
+            "path": "app-modules/catalog/src/Policies/ApplicationSku.php",
+            "expected_previous_hash": "185b8b5acaa914e46e117f82c288e9d27e292bf47c1cfbb0312f84f2bff299a0",
+            "planned_hash": "185b8b5acaa914e46e117f82c288e9d27e292bf47c1cfbb0312f84f2bff299a0",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:src/Providers/CatalogServiceProvider.php",
+            "id": "a4a3fc55df56ac5632e12b3bb91c76c1c57884fee250751e6677efa22fec4da6",
+            "path": "app-modules/catalog/src/Providers/CatalogServiceProvider.php",
+            "expected_previous_hash": "fb2831f3ded9dd2723dfb9d1cc0c1e3b9baa36c9b3b77e53cdc31ea3c657dcc5",
+            "planned_hash": "fb2831f3ded9dd2723dfb9d1cc0c1e3b9baa36c9b3b77e53cdc31ea3c657dcc5",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "generate",
+            "template_identity": "catalog:tests/HttpTest.php",
+            "id": "51bd9ddeb532865b0779fd849fb842feff19d3e0506595aefa8dafb249c0e487",
+            "path": "app-modules/catalog/tests/HttpTest.php",
+            "expected_previous_hash": "fd7d44f82ec4d9d6d694f1a40307826ee1167c8364680d10f99d7e06717309ee",
+            "planned_hash": "fd7d44f82ec4d9d6d694f1a40307826ee1167c8364680d10f99d7e06717309ee",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "edit",
+            "template_identity": "catalog:provider",
+            "id": "139a53739f995e3b2b9b570638ed4c7208c345e76961805f15f7cdca600668cd",
+            "path": "bootstrap/providers.php",
+            "expected_previous_hash": "e87dfac9bd9c3ca0bcaecd938158fe3c4dfc4bd459f86ab585cef4828b1ea251",
+            "planned_hash": "e87dfac9bd9c3ca0bcaecd938158fe3c4dfc4bd459f86ab585cef4828b1ea251",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        },
+        {
+            "kind": "edit",
+            "template_identity": "catalog:autoload",
+            "id": "d2ab9925cad7eac58e0ff4cc0d251a937ecf49e4b6bf57f8b95aab76648a9d34",
+            "path": "composer.json",
+            "expected_previous_hash": "700534ef6bc2d99ea8081077086555055815baf4aa5975eb63d20d105df466cc",
+            "planned_hash": "700534ef6bc2d99ea8081077086555055815baf4aa5975eb63d20d105df466cc",
+            "ownership": "application",
+            "status": "unchanged",
+            "conflict_reason": null,
+            "verification": "sha256 after atomic write"
+        }
+    ],
+    "migrations": [
+        {
+            "template_identity": "catalog:schema:brands:1",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000000_create_brands_table.php",
+            "operation": "operator runs php artisan migrate separately"
+        },
+        {
+            "template_identity": "catalog:schema:categories:1",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000001_create_categories_table.php",
+            "operation": "operator runs php artisan migrate separately"
+        },
+        {
+            "template_identity": "catalog:schema:regions:1",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000002_create_regions_table.php",
+            "operation": "operator runs php artisan migrate separately"
+        },
+        {
+            "template_identity": "catalog:schema:products:1",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000003_create_products_table.php",
+            "operation": "operator runs php artisan migrate separately"
+        },
+        {
+            "template_identity": "catalog:schema:user_brand_permissions:1",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000004_create_user_brand_permissions_table.php",
+            "operation": "operator runs php artisan migrate separately"
+        },
+        {
+            "template_identity": "catalog:schema:user_category_permissions:1",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000005_create_user_category_permissions_table.php",
+            "operation": "operator runs php artisan migrate separately"
+        },
+        {
+            "template_identity": "catalog:schema:user_product_permissions:1",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000006_create_user_product_permissions_table.php",
+            "operation": "operator runs php artisan migrate separately"
+        },
+        {
+            "template_identity": "catalog:schema:catalog_permission_states:1",
+            "path": "app-modules/catalog/database/migrations/2026_01_02_000007_create_catalog_permission_states_table.php",
+            "operation": "operator runs php artisan migrate separately"
+        }
+    ],
+    "conflicts": []
+}
+Files verified. Run composer dump-autoload, then foundry:doctor in a new process.
+Database migrations are listed separately in this plan. Run php artisan migrate only as a reviewed operator step; Foundry never executes migrations.

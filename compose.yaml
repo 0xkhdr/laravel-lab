@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    user: '${LOCAL_UID:-1000}:${LOCAL_GID:-1000}'
+    volumes:
+      - .:/workspace
+      - /var/www/html/rai/up/digital-cards-distribution:/reference:ro
+    working_dir: /workspace/consumer
+    command: sleep infinity
+    environment:
+      COMPOSER_ALLOW_SUPERUSER: '1'
+      COMPOSER_CACHE_DIR: /workspace/.composer-cache
+      COMPOSER_ROOT_VERSION: dev-main
+      COMPOSER_HOME: /workspace/.composer-home
+  redis:
+    image: redis:7-alpine

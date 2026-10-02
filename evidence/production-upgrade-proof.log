@@ -1,0 +1,21 @@
+./composer.json is valid
+
+   INFO  Configuration cached successfully.  
+
+
+   INFO  Routes cached successfully.  
+
+
+   INFO  Events cached successfully.  
+
+{
+    "foundry_installed": false,
+    "catalog_version": "0.1.1",
+    "runtime_packages": "independent mirrored copies",
+    "http_create": 201,
+    "http_read": 200,
+    "sku": "SITE-PRODUCTION-972ffd75",
+    "application_marker": "preserved",
+    "configuration_cached": true,
+    "routes_cached": true
+}

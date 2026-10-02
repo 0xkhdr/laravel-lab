@@ -1,0 +1,66 @@
+{
+    "name": "raid/pillar",
+    "description": "Raid Pillar for Laravel 12",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "~8.4.0",
+        "laravel/framework": "^12.0",
+        "internachi/modular": "^2.3"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "laravel/pint": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Raid\\Pillar\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Raid\\Pillar\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Raid\\Pillar\\PillarServiceProvider"
+            ]
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "versions": {
+                    "raid/pillar": "dev-main",
+                    "raid/catalog": "dev-main",
+                    "raid/foundry": "dev-main"
+                }
+            }
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "lint": "vendor/bin/pint --test"
+    },
+    "authors": [
+        {
+            "name": "Mohamed Khedr",
+            "email": "0xkhdr@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "suggest": {
+        "tucker-eric/eloquentfilter": "Required only for filters options; model must implement filter()"
+    }
+}

@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }}\Models;
+
+use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Laravel\Sanctum\HasApiTokens;
+use Raid\Catalog\Traits\HasCatalogPermissions;
+
+class CatalogUser extends User
+{
+    use HasApiTokens;
+    use HasCatalogPermissions;
+    use HasUuids;
+
+    protected $table = 'users';
+}

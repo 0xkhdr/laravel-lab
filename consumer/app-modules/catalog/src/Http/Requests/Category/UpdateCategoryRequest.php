@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\Catalog\Http\Requests\Category;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateCategoryRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'parent_id' => ['sometimes', 'nullable', 'uuid', 'exists:categories,id'],
+            'name' => ['sometimes', 'array'],
+            'name.en' => ['sometimes', 'string', 'max:255'],
+            'name.ar' => ['nullable', 'string', 'max:255'],
+            'is_active' => ['sometimes', 'boolean'],
+            'sort_order' => ['sometimes', 'integer', 'min:0'],
+        ];
+    }
+}

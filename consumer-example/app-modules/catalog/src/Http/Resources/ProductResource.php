@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\Catalog\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class ProductResource extends JsonResource
+{
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'brand_id' => $this->brand_id,
+            'category_id' => $this->category_id,
+            'region_id' => $this->region_id,
+            'sku' => $this->sku,
+            'name' => $this->getTranslations('name'),
+            'description' => $this->getTranslations('description'),
+            'is_active' => $this->is_active,
+            'sort_order' => $this->sort_order,
+            'brand' => $this->whenLoaded('brand', fn () => new BrandResource($this->brand)),
+            'category' => $this->whenLoaded('category', fn () => new CategoryResource($this->category)),
+            'region' => $this->whenLoaded('region', fn () => new RegionResource($this->region)),
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updated_at' => $this->updated_at?->toIso8601String(),
+        ];
+    }
+}

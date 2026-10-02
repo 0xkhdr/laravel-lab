@@ -1,0 +1,15 @@
+The repository at "/workspace/build/consumer" does not have the correct ownership and git refuses to use it:
+
+fatal: detected dubious ownership in repository at '/workspace'
+To add an exception for this directory, call:
+
+git config --global --add safe.directory /workspace
+
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 0 installs, 3 updates, 0 removals
+  - Upgrading raid/catalog (dev-main b9efabb => 0.1.0)
+  - Upgrading raid/foundry (dev-main 8e35e36 => dev-main f70db3a)
+  - Upgrading raid/pillar (dev-main 9e28319 => 0.1.0)
+Writing lock file
+No security vulnerability advisories found.

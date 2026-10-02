@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\Catalog\Http\Requests\Product;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateProductRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'brand_id' => ['sometimes', 'uuid', 'exists:brands,id'],
+            'category_id' => ['sometimes', 'uuid', 'exists:categories,id'],
+            'region_id' => ['sometimes', 'nullable', 'uuid', 'exists:regions,id'],
+            'sku' => ['sometimes', 'string', 'max:100', 'unique:products,sku,'.$this->route('id')],
+            'name' => ['sometimes', 'array'],
+            'name.en' => ['sometimes', 'string', 'max:255'],
+            'name.ar' => ['nullable', 'string', 'max:255'],
+            'description' => ['sometimes', 'nullable', 'array'],
+            'description.en' => ['nullable', 'string'],
+            'description.ar' => ['nullable', 'string'],
+            'is_active' => ['sometimes', 'boolean'],
+            'sort_order' => ['sometimes', 'integer', 'min:0'],
+        ];
+    }
+}

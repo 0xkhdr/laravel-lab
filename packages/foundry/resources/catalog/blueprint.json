@@ -1,0 +1,6 @@
+{
+    "recipe": "catalog",
+    "blueprint": "catalog.standard",
+    "recipe_version": "1.1.0",
+    "blueprint_version": "1.1.0"
+}

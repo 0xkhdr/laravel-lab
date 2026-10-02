@@ -1,0 +1,2 @@
+?? artifacts/
+?? pillar-foundry-workflow-plan.md

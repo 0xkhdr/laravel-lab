@@ -1,0 +1,80 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }}\Http\Controllers;
+
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Routing\Controller;
+use {{ namespace }}\Http\Requests\Product\CreateProductRequest;
+use {{ namespace }}\Http\Requests\Product\ListProductsRequest;
+use {{ namespace }}\Http\Requests\Product\UpdateProductRequest;
+use {{ namespace }}\Http\Resources\ProductResource;
+use Raid\Catalog\Actions\Product\CreateProductAction;
+use Raid\Catalog\Actions\Product\DeleteProductAction;
+use Raid\Catalog\Actions\Product\FindProductAction;
+use Raid\Catalog\Actions\Product\RetrievePaginateProductAction;
+use Raid\Catalog\Actions\Product\UpdateProductAction;
+
+/**
+ * ProductController
+ *
+ * Handles the full product lifecycle — list, create, show, update, delete —
+ * by delegating each operation to the corresponding Catalog Foundation action.
+ *
+ * Pattern: thin HTTP adapter. No business logic lives here.
+ *
+ * ── Access control ───────────────────────────────────────────────────────────
+ *
+ *   RetrievePaginateProductAction and FindProductAction apply the
+ *   `accessibleByUser` union-permission scope automatically. A product is
+ *   visible when ANY of the user's brand, category, or product permissions
+ *   covers it (OR logic — never AND).
+ *
+ * @see CreateProductAction
+ * @see UpdateProductAction
+ * @see FindProductAction
+ * @see DeleteProductAction
+ * @see RetrievePaginateProductAction
+ */
+class ProductController extends Controller
+{
+    public function index(ListProductsRequest $request, RetrievePaginateProductAction $action): AnonymousResourceCollection
+    {
+        $validated = $request->validated();
+        $perPage = (int) ($validated['per_page'] ?? 15);
+
+        $products = $action->handle(perPage: $perPage);
+
+        return ProductResource::collection($products);
+    }
+
+    public function store(CreateProductRequest $request, CreateProductAction $action): ProductResource
+    {
+        $product = $action->handle($request->validated());
+
+        return new ProductResource($product);
+    }
+
+    public function show(string $id, FindProductAction $action): ProductResource
+    {
+        $product = $action->handle(conditions: ['id' => $id]);
+
+        return new ProductResource($product);
+    }
+
+    public function update(UpdateProductRequest $request, string $id, UpdateProductAction $action): ProductResource
+    {
+        $product = $action->handle($id, $request->validated());
+
+        return new ProductResource($product);
+    }
+
+    public function destroy(string $id, DeleteProductAction $action): JsonResponse
+    {
+        $action->handle(ids: [$id]);
+
+        return response()->json(['message' => 'Product deleted successfully.']);
+    }
+}

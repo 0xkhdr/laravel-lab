@@ -1,0 +1,14 @@
+> Illuminate\Foundation\ComposerScripts::prePackageUninstall
+  - Removing raid/catalog (0.1.1)
+  - Installing raid/catalog (0.1.1): Mirroring from ../packages/catalog
+{
+    "foundry_installed": false,
+    "catalog_version": "0.1.1",
+    "runtime_packages": "independent mirrored copies",
+    "http_create": 201,
+    "http_read": 200,
+    "sku": "SITE-PRODUCTION-c23dfd6a",
+    "application_marker": "preserved",
+    "configuration_cached": true,
+    "routes_cached": true
+}

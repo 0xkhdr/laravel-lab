@@ -1,0 +1,95 @@
+Loading composer repositories with package information
+Updating dependencies
+Lock file operations: 19 installs, 0 updates, 0 removals
+  - Locking composer/ca-bundle (1.5.14)
+  - Locking composer/class-map-generator (1.8.0)
+  - Locking composer/composer (2.10.3)
+  - Locking composer/metadata-minifier (1.0.1)
+  - Locking composer/pcre (3.4.0)
+  - Locking composer/semver (3.5.0)
+  - Locking composer/spdx-licenses (1.6.0)
+  - Locking composer/xdebug-handler (3.0.5)
+  - Locking internachi/modular (2.3.0)
+  - Locking justinrainbow/json-schema (6.13.1)
+  - Locking marc-mabe/php-enum (v4.7.2)
+  - Locking raid/pillar (dev-main)
+  - Locking react/promise (v3.3.0)
+  - Locking seld/jsonlint (1.12.1)
+  - Locking seld/phar-utils (1.2.3)
+  - Locking seld/signal-handler (2.0.2)
+  - Locking symfony/filesystem (v8.1.6)
+  - Locking symfony/polyfill-php73 (v1.37.0)
+  - Locking symfony/polyfill-php81 (v1.38.1)
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Package operations: 19 installs, 0 updates, 0 removals
+  - Downloading symfony/polyfill-php81 (v1.38.1)
+  - Downloading symfony/polyfill-php73 (v1.37.0)
+  - Downloading symfony/filesystem (v8.1.6)
+  - Downloading seld/signal-handler (2.0.2)
+  - Downloading seld/phar-utils (1.2.3)
+  - Downloading seld/jsonlint (1.12.1)
+  - Downloading react/promise (v3.3.0)
+  - Downloading marc-mabe/php-enum (v4.7.2)
+  - Downloading justinrainbow/json-schema (6.13.1)
+  - Downloading composer/pcre (3.4.0)
+  - Downloading composer/xdebug-handler (3.0.5)
+  - Downloading composer/spdx-licenses (1.6.0)
+  - Downloading composer/semver (3.5.0)
+  - Downloading composer/metadata-minifier (1.0.1)
+  - Downloading composer/class-map-generator (1.8.0)
+  - Downloading composer/ca-bundle (1.5.14)
+  - Downloading composer/composer (2.10.3)
+  - Downloading internachi/modular (2.3.0)
+  0/18 [>---------------------------]   0%
+  8/18 [============>---------------]  44%
+ 11/18 [=================>----------]  61%
+ 13/18 [====================>-------]  72%
+ 16/18 [========================>---]  88%
+ 17/18 [==========================>-]  94%
+ 18/18 [============================] 100%
+  - Installing symfony/polyfill-php81 (v1.38.1): Extracting archive
+  - Installing symfony/polyfill-php73 (v1.37.0): Extracting archive
+  - Installing symfony/filesystem (v8.1.6): Extracting archive
+  - Installing seld/signal-handler (2.0.2): Extracting archive
+  - Installing seld/phar-utils (1.2.3): Extracting archive
+  - Installing seld/jsonlint (1.12.1): Extracting archive
+  - Installing react/promise (v3.3.0): Extracting archive
+  - Installing marc-mabe/php-enum (v4.7.2): Extracting archive
+  - Installing justinrainbow/json-schema (6.13.1): Extracting archive
+  - Installing composer/pcre (3.4.0): Extracting archive
+  - Installing composer/xdebug-handler (3.0.5): Extracting archive
+  - Installing composer/spdx-licenses (1.6.0): Extracting archive
+  - Installing composer/semver (3.5.0): Extracting archive
+  - Installing composer/metadata-minifier (1.0.1): Extracting archive
+  - Installing composer/class-map-generator (1.8.0): Extracting archive
+  - Installing composer/ca-bundle (1.5.14): Extracting archive
+  - Installing composer/composer (2.10.3): Extracting archive
+  - Installing internachi/modular (2.3.0): Extracting archive
+  - Installing raid/pillar (dev-main): Symlinking from ../packages/pillar
+  0/18 [>---------------------------]   0%
+  9/18 [==============>-------------]  50%
+ 16/18 [========================>---]  88%
+ 18/18 [============================] 100%
+Generating optimized autoload files
+> Illuminate\Foundation\ComposerScripts::postAutoloadDump
+> @php artisan package:discover --ansi
+
+  [37;44m INFO [39;49m Discovering packages.  
+
+  internachi/modular [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+  laravel/pail [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+  laravel/sail [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+  laravel/tinker [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+  nesbot/carbon [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+  nunomaduro/collision [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+  nunomaduro/termwind [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+  raid/pillar [90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m[90m.[39m [32;1mDONE[39;22m
+
+94 packages you are using are looking for funding.
+Use the `composer fund` command to find out more!
+> @php artisan vendor:publish --tag=laravel-assets --ansi --force
+
+  [37;44m INFO [39;49m No publishable resources for tag [1m[laravel-assets][22m.  
+
+No security vulnerability advisories found.

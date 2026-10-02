@@ -1,0 +1,62 @@
+{
+    "name": "raid/foundry",
+    "description": "Raid Foundry for Laravel 12",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "~8.4.0",
+        "laravel/framework": "^12.0",
+        "raid/pillar": "dev-main",
+        "composer-runtime-api": "^2.2"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "laravel/pint": "^1.0",
+        "raid/catalog": "dev-main",
+        "laravel/sanctum": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Raid\\Foundry\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Raid\\Foundry\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Raid\\Foundry\\FoundryServiceProvider"
+            ]
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "versions": {
+                    "raid/pillar": "dev-main",
+                    "raid/catalog": "dev-main",
+                    "raid/foundry": "dev-main"
+                }
+            }
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "lint": "vendor/bin/pint --test"
+    },
+    "suggest": {
+        "raid/catalog": "Install through Composer before using the Catalog recipe."
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "name": "modules/catalog",
+    "description": "Application Catalog integration",
+    "type": "library",
+    "license": "proprietary",
+    "require": {
+        "raid/catalog": "dev-main",
+        "raid/pillar": "dev-main",
+        "laravel/sanctum": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Catalog\\": "src/"
+        }
+    }
+}

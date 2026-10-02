@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\Catalog\Http\Requests\Product;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class CreateProductRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'brand_id' => ['required', 'uuid', 'exists:brands,id'],
+            'category_id' => ['required', 'uuid', 'exists:categories,id'],
+            'region_id' => ['nullable', 'uuid', 'exists:regions,id'],
+            'sku' => ['required', 'string', 'max:100', 'unique:products,sku'],
+            'name' => ['required', 'array'],
+            'name.en' => ['required', 'string', 'max:255'],
+            'name.ar' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'array'],
+            'description.en' => ['nullable', 'string'],
+            'description.ar' => ['nullable', 'string'],
+            'is_active' => ['nullable', 'boolean'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
+        ];
+    }
+}
