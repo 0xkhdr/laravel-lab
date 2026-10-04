@@ -228,4 +228,295 @@ final class InstallerTest extends TestCase
         }
         $this->assertSame($before, $this->snapshot());
     }
+
+    private function addLaterRegistrations(): void
+    {
+        $path = $this->root.'/composer.json';
+        $json = json_decode(file_get_contents($path), true);
+        $json['autoload']['psr-4']['Modules\\Later\\'] = 'app-modules/later/src/';
+        $json['extra']['application-setting'] = 'keep';
+        file_put_contents($path, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
+        $path = $this->root.'/bootstrap/providers.php';
+        $content = file_get_contents($path);
+        $content = str_replace('return [', "// application comment\nreturn [", $content);
+        file_put_contents($path, str_replace('];', "    App\\Providers\\LaterServiceProvider::class,\n];", $content));
+    }
+
+    private function assertLaterRegistrationsSurvive(): void
+    {
+        $json = json_decode(file_get_contents($this->root.'/composer.json'), true);
+        $this->assertSame('app-modules/later/src/', $json['autoload']['psr-4']['Modules\\Later\\']);
+        $this->assertSame('keep', $json['extra']['application-setting']);
+        $this->assertArrayNotHasKey('Modules\\Catalog\\', $json['autoload']['psr-4']);
+        $providers = file_get_contents($this->root.'/bootstrap/providers.php');
+        $this->assertStringContainsString('LaterServiceProvider::class', $providers);
+        $this->assertStringContainsString('// application comment', $providers);
+        $this->assertStringNotContainsString('CatalogServiceProvider::class', $providers);
+    }
+
+    public function test_later_registrations_survive_reconciliation_and_repeated_recovery(): void
+    {
+        $this->installer->apply($this->installer->plan());
+        $this->addLaterRegistrations();
+        $before = $this->snapshot();
+        $plan = $this->installer->plan();
+        $this->assertSame([], $plan['conflicts']);
+        $this->assertSame($before, $this->snapshot());
+        $this->installer->apply($plan);
+        $this->assertSame($before, $this->snapshot());
+        // Force a checkpoint refresh, as an interrupted installation or blueprint upgrade would.
+        $journalPath = $this->root.'/.foundry/installations.json';
+        $journal = json_decode(file_get_contents($journalPath), true);
+        $journal['installations']['catalog']['status'] = 'pending';
+        file_put_contents($journalPath, json_encode($journal));
+        $this->installer->apply($this->installer->plan());
+        $checkpoint = file_get_contents($journalPath);
+        $this->installer->rollback('Catalog');
+        $this->assertLaterRegistrationsSurvive();
+        // Simulate exit after recovery writes, before recording recovery checkpoints.
+        file_put_contents($journalPath, $checkpoint);
+        $this->installer->rollback('Catalog');
+        $this->assertLaterRegistrationsSurvive();
+        // A new installation after recovery gets fresh contribution ownership.
+        $this->installer->apply($this->installer->plan());
+        $this->installer->rollback('Catalog');
+        $this->assertLaterRegistrationsSurvive();
+    }
+
+    public function test_shared_additions_do_not_weaken_policy_resource_or_recovery_protection(): void
+    {
+        $this->installer->apply($this->installer->plan());
+        $this->addLaterRegistrations();
+        foreach (['Policies/ApplicationSku.php', 'Http/Resources/ProductResource.php'] as $file) {
+            $path = $this->root.'/app-modules/catalog/src/'.$file;
+            file_put_contents($path, file_get_contents($path)."\n// application-owned customization\n");
+        }
+        $before = $this->snapshot();
+        $this->assertCount(2, $this->installer->plan()['conflicts']);
+        try {
+            $this->installer->rollback('Catalog');
+            $this->fail('Customized generated files were removed');
+        } catch (RuntimeException $error) {
+            $this->assertStringContainsString('Recovery conflict', $error->getMessage());
+        }
+        $this->assertSame($before, $this->snapshot());
+    }
+
+    public function test_changed_mapping_and_ambiguous_provider_stop_recovery_before_writes(): void
+    {
+        $this->installer->apply($this->installer->plan());
+        $composer = file_get_contents($this->root.'/composer.json');
+        file_put_contents($this->root.'/composer.json', str_replace('app-modules/catalog/src/', 'custom/src/', $composer));
+        $before = $this->snapshot();
+        $this->assertNotEmpty($this->installer->plan()['conflicts']);
+        try {
+            $this->installer->rollback('Catalog');
+            $this->fail('Changed mapping accepted');
+        } catch (RuntimeException $error) {
+            $this->assertStringContainsString('composer.json', $error->getMessage());
+        }
+        $this->assertSame($before, $this->snapshot());
+        file_put_contents($this->root.'/composer.json', $composer);
+        file_put_contents($this->root.'/bootstrap/providers.php', '<?php return array_merge([], custom_providers());');
+        $before = $this->snapshot();
+        $this->assertNotEmpty($this->installer->plan()['conflicts']);
+        try {
+            $this->installer->rollback('Catalog');
+            $this->fail('Dynamic provider layout accepted');
+        } catch (RuntimeException $error) {
+            $this->assertStringContainsString('Manual patch', $error->getMessage());
+        }
+        $this->assertSame($before, $this->snapshot());
+    }
+
+    public function test_provider_aliases_comments_and_duplicate_detection(): void
+    {
+        $this->installer->apply($this->installer->plan());
+        $path = $this->root.'/bootstrap/providers.php';
+        file_put_contents($path, "<?php\ndeclare(strict_types=1);\nuse Modules\\Catalog as Slice;\nreturn [\n    // Modules\\Catalog\\Providers\\CatalogServiceProvider::class,\n    slice\\Providers\\CatalogServiceProvider::class,\n    \\App\\Providers\\LaterServiceProvider::class,\n];\n");
+        $plan = $this->installer->plan();
+        $this->assertSame([], $plan['conflicts']);
+        $this->installer->apply($plan);
+        $content = file_get_contents($path);
+        file_put_contents($path, str_replace('];', "    Modules\\Catalog\\Providers\\CatalogServiceProvider::class,\n];", $content));
+        $this->assertStringContainsString('Duplicate Catalog', implode(' ', $this->installer->plan()['conflicts']));
+        file_put_contents($path, $content);
+        $this->installer->rollback('Catalog');
+        $this->assertStringNotContainsString('    slice\\Providers\\CatalogServiceProvider::class,', file_get_contents($path));
+        $this->assertStringContainsString('LaterServiceProvider::class', file_get_contents($path));
+        $this->assertStringContainsString('// Modules', file_get_contents($path));
+    }
+
+    private function makeLegacyJournal(): array
+    {
+        $path = $this->root.'/.foundry/installations.json';
+        $journal = json_decode(file_get_contents($path), true);
+        foreach ($journal['installations']['catalog']['operations'] as &$entry) {
+            unset($entry['contribution']);
+        }
+        unset($entry);
+        file_put_contents($path, json_encode($journal, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
+
+        return $journal;
+    }
+
+    public function test_legacy_records_upgrade_explicitly_and_preserve_stable_ids_and_later_edits(): void
+    {
+        $this->installer->apply($this->installer->plan());
+        $legacy = $this->makeLegacyJournal();
+        $this->addLaterRegistrations();
+        $before = $this->snapshot();
+        $plan = $this->installer->plan();
+        $this->assertSame([], $plan['conflicts']);
+        $this->assertSame($before, $this->snapshot());
+        $this->installer->apply($plan);
+        $journal = json_decode(file_get_contents($this->root.'/.foundry/installations.json'), true);
+        $this->assertSame(1, $journal['schema_version']);
+        $this->assertSame(array_keys($legacy['installations']['catalog']['operations']), array_keys($journal['installations']['catalog']['operations']));
+        $this->assertSame(1, $journal['installations']['catalog']['operations'][hash('sha256', 'composer.json')]['contribution']['version']);
+        $after = $this->snapshot();
+        $this->installer->apply($this->installer->plan());
+        $this->assertSame($after, $this->snapshot());
+        $this->installer->rollback('Catalog');
+        $this->assertLaterRegistrationsSurvive();
+    }
+
+    public function test_legacy_direct_recovery_and_missing_backup_conflicts(): void
+    {
+        $this->installer->apply($this->installer->plan());
+        $legacy = $this->makeLegacyJournal();
+        $this->addLaterRegistrations();
+        $entry = $legacy['installations']['catalog']['operations'][hash('sha256', 'composer.json')];
+        $backup = $this->root.'/'.$entry['backup'];
+        $content = file_get_contents($backup);
+        file_put_contents($backup, 'corrupt');
+        $before = $this->snapshot();
+        $this->assertStringContainsString('Legacy ownership cannot be proven', implode(' ', $this->installer->plan()['conflicts']));
+        try {
+            $this->installer->rollback('Catalog');
+            $this->fail('Unproven legacy ownership accepted');
+        } catch (RuntimeException $error) {
+            $this->assertStringContainsString('Legacy ownership cannot be proven', $error->getMessage());
+        }
+        $this->assertSame($before, $this->snapshot());
+        file_put_contents($backup, $content);
+        $this->installer->rollback('Catalog');
+        $this->assertLaterRegistrationsSurvive();
+    }
+
+    public function test_preexisting_registrations_are_adopted_without_recovery_ownership(): void
+    {
+        $plan = $this->installer->plan();
+        foreach ($plan['operations'] as $operation) {
+            if ($operation['kind'] === 'edit') {
+                file_put_contents($this->root.'/'.$operation['path'], $operation['content']);
+            }
+        }
+        $composer = file_get_contents($this->root.'/composer.json');
+        $providers = file_get_contents($this->root.'/bootstrap/providers.php');
+        $this->installer->apply($this->installer->plan());
+        $this->installer->rollback('Catalog');
+        $this->assertSame($composer, file_get_contents($this->root.'/composer.json'));
+        $this->assertSame($providers, file_get_contents($this->root.'/bootstrap/providers.php'));
+    }
+
+    public function test_interrupted_shared_writes_resume_with_later_registrations(): void
+    {
+        foreach (['bootstrap/providers.php', 'composer.json'] as $target) {
+            try {
+                $this->installer->apply($this->installer->plan(), function (int $count, array $operation) use ($target): void {
+                    if ($operation['path'] === $target) {
+                        throw new RuntimeException('Interrupted shared write');
+                    }
+                });
+                $this->fail('Interruption not injected');
+            } catch (RuntimeException $error) {
+                $this->assertSame('Interrupted shared write', $error->getMessage());
+            }
+            $this->addLaterRegistrations();
+            $plan = $this->installer->plan();
+            $this->assertSame([], $plan['conflicts']);
+            $this->installer->apply($plan);
+            $this->installer->rollback('Catalog');
+            $this->assertLaterRegistrationsSurvive();
+        }
+    }
+
+    public function test_removed_owned_registration_is_a_reconciliation_conflict(): void
+    {
+        $this->installer->apply($this->installer->plan());
+        $path = $this->root.'/bootstrap/providers.php';
+        file_put_contents($path, str_replace("    \\Modules\\Catalog\\Providers\\CatalogServiceProvider::class,\n", '', file_get_contents($path)));
+        $before = $this->snapshot();
+        $this->assertStringContainsString('Catalog registration removed', implode(' ', $this->installer->plan()['conflicts']));
+        $this->assertSame($before, $this->snapshot());
+    }
+
+    public function test_shared_symlink_and_future_contribution_metadata_are_rejected(): void
+    {
+        $this->installer->apply($this->installer->plan());
+        $path = $this->root.'/.foundry/installations.json';
+        $journal = json_decode(file_get_contents($path), true);
+        $journal['installations']['catalog']['operations'][hash('sha256', 'composer.json')]['contribution']['version'] = 999;
+        file_put_contents($path, json_encode($journal));
+        $before = $this->snapshot();
+        $this->assertStringContainsString('Unsupported or mismatched', implode(' ', $this->installer->plan()['conflicts']));
+        try {
+            $this->installer->rollback('Catalog');
+            $this->fail('Unsupported contribution accepted');
+        } catch (RuntimeException $error) {
+            $this->assertStringContainsString('Unsupported or mismatched', $error->getMessage());
+        }
+        $this->assertSame($before, $this->snapshot());
+        rename($this->root.'/composer.json', $this->root.'/composer-original.json');
+        symlink($this->root.'/composer-original.json', $this->root.'/composer.json');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Symlink destination');
+        $this->installer->rollback('Catalog');
+    }
+
+    public function test_literal_provider_array_without_trailing_comma_and_json_objects_are_preserved(): void
+    {
+        file_put_contents($this->root.'/bootstrap/providers.php', "<?php\nreturn [\n    App\\Providers\\AppServiceProvider::class // keep this comment\n];\n");
+        $this->installer->apply($this->installer->plan());
+        $this->addLaterRegistrations();
+        $path = $this->root.'/composer.json';
+        $json = json_decode(file_get_contents($path));
+        $json->extra->{'empty-object'} = new \stdClass;
+        file_put_contents($path, json_encode($json, JSON_PRETTY_PRINT));
+        $this->installer->rollback('Catalog');
+        $this->assertLaterRegistrationsSurvive();
+        $this->assertInstanceOf(\stdClass::class, json_decode(file_get_contents($path))->extra->{'empty-object'});
+        $this->assertStringContainsString('// keep this comment', file_get_contents($this->root.'/bootstrap/providers.php'));
+    }
+
+    public function test_comments_inside_owned_provider_expression_require_manual_review(): void
+    {
+        $this->installer->apply($this->installer->plan());
+        $path = $this->root.'/bootstrap/providers.php';
+        file_put_contents($path, str_replace('CatalogServiceProvider::class', 'CatalogServiceProvider /* application comment */ ::class', file_get_contents($path)));
+        $before = $this->snapshot();
+        $this->assertStringContainsString('Customized Catalog provider expression', implode(' ', $this->installer->plan()['conflicts']));
+        try {
+            $this->installer->rollback('Catalog');
+            $this->fail('Comment inside the registration was removed');
+        } catch (RuntimeException $error) {
+            $this->assertStringContainsString('Manual patch', $error->getMessage());
+        }
+        $this->assertSame($before, $this->snapshot());
+    }
+
+    public function test_new_provider_uses_absolute_name_despite_conflicting_namespace_import(): void
+    {
+        file_put_contents($this->root.'/bootstrap/providers.php', '<?php use Other as Modules; return [];');
+        file_put_contents($this->root.'/composer.json', '{"name":"example/consumer","extra":{}}');
+        $plan = $this->installer->plan();
+        $this->assertSame([], $plan['conflicts']);
+        $this->installer->apply($plan);
+        $this->assertStringContainsString('\\Modules\\Catalog\\Providers\\CatalogServiceProvider::class', file_get_contents($this->root.'/bootstrap/providers.php'));
+        $this->assertSame([], $this->installer->plan()['conflicts']);
+        $this->installer->rollback('Catalog');
+        $this->assertSame('{"name":"example/consumer","extra":{}}', file_get_contents($this->root.'/composer.json'));
+        $this->assertSame('<?php use Other as Modules; return [];', file_get_contents($this->root.'/bootstrap/providers.php'));
+    }
 }

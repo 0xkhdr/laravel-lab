@@ -56,3 +56,5 @@ Pillar and Catalog are runtime dependencies. Foundry is a development dependency
 `dev-main` identifies local development packages. Release fixture labels `0.1.0` and `0.1.1` test upgrades and are not published versions. Foundry recipe/blueprint `1.1.0` versions generated templates separately from Composer packages.
 
 Consumer Composer setup and creation hooks do not run migrations. Do not use `composer setup` for the Docker bootstrap: its inherited frontend steps require Node, which the PHP image does not include. Use the commands above. Historical scripts under `tools/` reconstruct acceptance evidence; they are not the normal development entry point.
+
+Catalog shared-file recovery and the application-owned authentication/authorization contract are documented in [Foundry README](packages/foundry/README.md). Identity remains future preparation; Catalog is the only supported recipe.

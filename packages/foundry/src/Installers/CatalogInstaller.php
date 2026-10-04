@@ -7,6 +7,7 @@ namespace Raid\Foundry\Installers;
 use Illuminate\Support\Str;
 use Raid\Catalog\Contracts\SkuPolicy;
 use RuntimeException;
+use Throwable;
 
 final class CatalogInstaller
 {
@@ -87,58 +88,30 @@ final class CatalogInstaller
             }
             $files[$path] = ['content' => file_get_contents($template), 'kind' => 'generate', 'template_identity' => 'catalog:schema:'.$table.':1'];
         }
-        $composer = $this->json($this->path('composer.json'));
-        $prefix = $namespace.'\\';
-        $mapping = $base.'/src/';
-        $existing = $composer['autoload']['psr-4'][$prefix] ?? null;
-        if ($existing !== null && $existing !== $mapping) {
-            $conflicts[] = 'Autoload namespace already maps to a different path: '.$prefix;
-        } elseif ($existing === null) {
-            $composer['autoload']['psr-4'][$prefix] = $mapping;
-            $files['composer.json'] = ['content' => json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR)."\n", 'kind' => 'edit', 'template_identity' => 'catalog:autoload'];
-        }
-        $provider = $namespace.'\\Providers\\'.$module.'ServiceProvider';
-        $providers = file_get_contents($this->path('bootstrap/providers.php'));
-        $aliases = [$provider];
-        if (preg_match('/use\s+'.preg_quote($provider, '/').'(?:\s+as\s+(\w+))?\s*;/', $providers, $import)) {
-            $aliases[] = $import[1] ?? $module.'ServiceProvider';
-        }
-        $count = 0;
-        foreach ($aliases as $alias) {
-            $count += substr_count($providers, $alias.'::class');
-        }
-        if ($count > 1) {
-            $conflicts[] = 'Duplicate Catalog provider registrations in bootstrap/providers.php.';
-        } elseif ($count === 0) {
-            if (! preg_match('/return\s*\[([\s\S]*?)\];\s*$/', $providers, $array)
-                || ! preg_match('/^\s*(?:[A-Za-z_\\\\][A-Za-z0-9_\\\\]*::class\s*,\s*)*$/', $array[1])) {
-                $conflicts[] = 'Cannot safely edit bootstrap/providers.php. Manual patch: add '.$provider.'::class to the returned provider array once.';
-            } else {
-                $providers = str_replace($array[0], 'return ['.$array[1].'    '.$provider."::class,\n];\n", $providers);
-                $files['bootstrap/providers.php'] = ['content' => $providers, 'kind' => 'edit', 'template_identity' => 'catalog:provider'];
-            }
-        }
-        ksort($files);
-        foreach ($prior['operations'] ?? [] as $entry) {
-            if ($entry['kind'] === 'edit' && ($prior['status'] ?? null) !== 'restored') {
-                $actual = $this->hash($this->path($entry['path']));
-                $allowed = [$entry['hash'] ?? $entry['planned_hash']];
-                if ($entry['status'] === 'pending') {
-                    $allowed[] = $entry['expected_previous_hash'];
+        $shared = [
+            'composer.json' => ['version' => 1, 'type' => 'autoload', 'key' => $namespace.'\\', 'value' => $base.'/src/'],
+            'bootstrap/providers.php' => ['version' => 1, 'type' => 'provider', 'value' => $namespace.'\\Providers\\'.$module.'ServiceProvider'],
+        ];
+        foreach ($shared as $relative => $contribution) {
+            try {
+                $content = file_get_contents($this->path($relative));
+                $old = ($prior['status'] ?? null) === 'restored' ? null : ($prior['operations'][hash('sha256', $relative)] ?? null);
+                $value = CatalogSharedFiles::value($content, $contribution);
+                if ($old) {
+                    $contribution = $this->contribution($old, $contribution);
+                    if ($value === null && $old['status'] === 'completed') {
+                        throw new RuntimeException('Catalog registration removed; review before reinstalling.');
+                    }
+                } else {
+                    $contribution['owned'] = $value === null;
                 }
-                if (! in_array($actual, $allowed, true)) {
-                    $conflicts[] = 'Customized owned configuration: '.$entry['path'].'. Preserve it and review the autoload/provider changes manually.';
-                }
-            }
-            if ($entry['kind'] === 'edit' && ! isset($files[$entry['path']])) {
-                $path = $this->path($entry['path']);
-                $hash = $this->hash($path);
-                if ($hash !== ($entry['hash'] ?? $entry['planned_hash'])) {
-                    $conflicts[] = 'Customized owned configuration: '.$entry['path'].'. Review its registration/autoload patch manually.';
-                }
-                if ($hash !== null) {
-                    $files[$entry['path']] = ['content' => file_get_contents($path), 'kind' => 'edit', 'template_identity' => $entry['template_identity']];
-                }
+                $content = CatalogSharedFiles::patch($content, $contribution);
+                $contribution['original_hash'] ??= $old['planned_hash'] ?? hash('sha256', $content);
+                $files[$relative] = ['content' => $content, 'kind' => 'edit',
+                    'template_identity' => $relative === 'composer.json' ? 'catalog:autoload' : 'catalog:provider',
+                    'contribution' => $contribution];
+            } catch (Throwable $error) {
+                $conflicts[] = 'Shared configuration conflict: '.$relative.': '.$error->getMessage();
             }
         }
         ksort($files);
@@ -205,12 +178,12 @@ final class CatalogInstaller
             $record['operations'] = [];
             $record['status'] = 'pending';
             foreach ($plan['operations'] as $operation) {
-                $old = $prior['operations'][$operation['id']] ?? [];
+                $old = ($prior['status'] ?? null) === 'restored' ? [] : ($prior['operations'][$operation['id']] ?? []);
                 $entry = $operation;
                 unset($entry['content']);
                 $entry['before_hash'] = array_key_exists('before_hash', $old) ? $old['before_hash'] : $operation['expected_previous_hash'];
                 $entry['backup'] = $old['backup'] ?? null;
-                if ($operation['status'] === 'unchanged' && isset($old['hash']) && $old['hash'] !== $operation['planned_hash']) {
+                if (! isset($operation['contribution']) && $operation['status'] === 'unchanged' && isset($old['hash']) && $old['hash'] !== $operation['planned_hash']) {
                     // Matching manual changes are adopted without claiming permission to undo them.
                     $entry['before_hash'] = $operation['expected_previous_hash'];
                     $entry['backup'] = null;
@@ -219,7 +192,9 @@ final class CatalogInstaller
                 $record['operations'][$operation['id']] = $entry;
             }
             // Preserve owned editor records omitted from an unchanged plan.
-            $record['operations'] += $prior['operations'] ?? [];
+            if (($prior['status'] ?? null) !== 'restored') {
+                $record['operations'] += $prior['operations'] ?? [];
+            }
             $journal['installations']['catalog'] = $record;
             if ($this->completeUnchanged($plan, $prior)) {
                 $this->verify($plan);
@@ -293,30 +268,71 @@ final class CatalogInstaller
         if (! $record || $record['module'] !== Str::studly($module)) {
             throw new RuntimeException('No owned Catalog installation for this module.');
         }
-        foreach ($record['operations'] as $entry) {
-            $actual = $this->hash($this->path($entry['path']));
-            if ($actual !== $entry['planned_hash'] && $actual !== $entry['before_hash']) {
-                throw new RuntimeException('Recovery conflict: preserve customized '.$entry['path']);
-            }
-            if ($entry['before_hash'] !== null && (! isset($entry['backup']) || $this->hash($this->path($entry['backup'])) !== $entry['before_hash'])) {
-                if ($actual !== $entry['before_hash']) {
-                    throw new RuntimeException('Missing or corrupt recovery backup: '.$entry['path']);
-                }
-            }
-        }
         $lock = $this->lock();
         try {
+            $journal = $this->journal();
+            $record = $journal['installations']['catalog'] ?? null;
+            if (! $record || $record['module'] !== Str::studly($module)) {
+                throw new RuntimeException('Catalog installation changed before recovery. Inspect again.');
+            }
+            // Build every recovery output before changing any application file.
+            $recovery = [];
+            foreach ($record['operations'] as $id => $entry) {
+                $path = $this->path($entry['path']);
+                $actual = $this->hash($path);
+                if (in_array($entry['path'], ['composer.json', 'bootstrap/providers.php'], true)) {
+                    $default = $entry['path'] === 'composer.json'
+                        ? ['version' => 1, 'type' => 'autoload', 'key' => $record['namespace'].'\\', 'value' => $record['module_path'].'/src/']
+                        : ['version' => 1, 'type' => 'provider', 'value' => $record['namespace'].'\\Providers\\'.$record['module'].'ServiceProvider'];
+                    try {
+                        $contribution = $this->contribution($entry, $default);
+                        $content = file_get_contents($path);
+                        $value = CatalogSharedFiles::value($content, $contribution);
+                        if ($value !== null && $value !== $contribution['value']) {
+                            throw new RuntimeException('Catalog contribution changed.');
+                        }
+                        if ($contribution['owned']) {
+                            $content = CatalogSharedFiles::patch($content, $contribution, remove: true);
+                            // An exact, verified snapshot can preserve original formatting.
+                            if ($actual === ($contribution['original_hash'] ?? $entry['planned_hash']) && isset($entry['backup'])
+                                && $this->hash($this->path($entry['backup'])) === $entry['before_hash']) {
+                                $content = file_get_contents($this->path($entry['backup']));
+                            }
+                        }
+                    } catch (Throwable $error) {
+                        throw new RuntimeException('Recovery conflict: '.$entry['path'].': '.$error->getMessage(), previous: $error);
+                    }
+                } else {
+                    if ($actual !== $entry['planned_hash'] && $actual !== $entry['before_hash']) {
+                        throw new RuntimeException('Recovery conflict: preserve customized '.$entry['path']);
+                    }
+                    $content = $actual === null ? null : file_get_contents($path);
+                    if ($actual !== $entry['before_hash']) {
+                        if ($entry['before_hash'] === null) {
+                            $content = null;
+                        } else {
+                            if (! isset($entry['backup']) || $this->hash($this->path($entry['backup'])) !== $entry['before_hash']) {
+                                throw new RuntimeException('Missing or corrupt recovery backup: '.$entry['path']);
+                            }
+                            $content = file_get_contents($this->path($entry['backup']));
+                        }
+                    }
+                }
+                $recovery[$id] = ['expected' => $actual, 'content' => $content];
+            }
             foreach (array_reverse(array_keys($record['operations'])) as $id) {
                 $entry = &$journal['installations']['catalog']['operations'][$id];
                 $path = $this->path($entry['path']);
-                if ($this->hash($path) !== $entry['before_hash']) {
-                    if ($entry['before_hash'] === null) {
-                        if (! unlink($path)) {
-                            throw new RuntimeException('Cannot remove '.$entry['path']);
-                        }
-                    } else {
-                        $this->atomicWrite($path, file_get_contents($this->path($entry['backup'])));
+                $output = $recovery[$id];
+                if ($this->hash($path) !== $output['expected']) {
+                    throw new RuntimeException('Recovery conflict: file changed during recovery: '.$entry['path']);
+                }
+                if ($output['content'] === null) {
+                    if ($output['expected'] !== null && ! unlink($path)) {
+                        throw new RuntimeException('Cannot remove '.$entry['path']);
                     }
+                } elseif (hash('sha256', $output['content']) !== $output['expected']) {
+                    $this->atomicWrite($path, $output['content']);
                 }
                 $entry['status'] = 'restored';
                 $this->saveJournal($journal);
@@ -330,12 +346,44 @@ final class CatalogInstaller
         }
     }
 
+    private function contribution(array $entry, array $default): array
+    {
+        if (isset($entry['contribution'])) {
+            $contribution = $entry['contribution'];
+            if (($contribution['version'] ?? null) !== 1 || ! is_bool($contribution['owned'] ?? null)
+                || array_diff_assoc($default, $contribution) !== []) {
+                throw new RuntimeException('Unsupported or mismatched Catalog contribution metadata. Review the journal.');
+            }
+
+            return $contribution;
+        }
+        // Schema-1 whole-file records: infer ownership only from verified before evidence.
+        if ($entry['before_hash'] === $entry['planned_hash']) {
+            return $default + ['owned' => false];
+        }
+        $backup = isset($entry['backup']) ? $this->path($entry['backup']) : null;
+        if ($backup && $this->hash($backup) === $entry['before_hash']) {
+            $before = file_get_contents($backup);
+        } elseif ($this->hash($this->path($entry['path'])) === $entry['before_hash']) {
+            $before = file_get_contents($this->path($entry['path']));
+        } else {
+            throw new RuntimeException('Legacy ownership cannot be proven: missing/corrupt backup. Preserve files and review the journal.');
+        }
+        $value = CatalogSharedFiles::value($before, $default);
+        if ($value !== null && $value !== $default['value']) {
+            throw new RuntimeException('Legacy backup contains a different Catalog contribution.');
+        }
+
+        return $default + ['owned' => $value === null];
+    }
+
     private function completeUnchanged(array $plan, array $prior): bool
     {
         return ($prior['status'] ?? null) === 'completed'
             && ($prior['recipe_version'] ?? null) === $plan['recipe_version']
             && ($prior['blueprint_version'] ?? null) === $plan['blueprint_version']
-            && array_all($plan['operations'], fn (array $operation): bool => $operation['status'] === 'unchanged');
+            && array_all($plan['operations'], fn (array $operation): bool => $operation['status'] === 'unchanged'
+                && (! isset($operation['contribution']) || isset($prior['operations'][$operation['id']]['contribution'])));
     }
 
     private function migrationCopies(string $table): array
@@ -380,7 +428,12 @@ final class CatalogInstaller
     {
         $path = $this->path('.foundry/installations.json');
 
-        return is_file($path) ? $this->json($path) : ['schema_version' => 1, 'installations' => []];
+        $journal = is_file($path) ? $this->json($path) : ['schema_version' => 1, 'installations' => []];
+        if (($journal['schema_version'] ?? null) !== 1) {
+            throw new RuntimeException('Unsupported Foundry journal schema. Preserve files and review compatibility.');
+        }
+
+        return $journal;
     }
 
     private function saveJournal(array $journal): void
