@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    image: laravel-lab-php:local
     user: '${LOCAL_UID:-1000}:${LOCAL_GID:-1000}'
     volumes:
       - .:/workspace
@@ -12,5 +13,13 @@ services:
       COMPOSER_CACHE_DIR: /workspace/.composer-cache
       COMPOSER_ROOT_VERSION: dev-main
       COMPOSER_HOME: /workspace/.composer-home
+  web:
+    extends:
+      service: app
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    ports:
+      - '127.0.0.1:${WEB_PORT:-8088}:8000'
+    depends_on:
+      - redis
   redis:
     image: redis:7-alpine
