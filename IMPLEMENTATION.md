@@ -2,6 +2,8 @@
 
 Reference is mounted read-only at `/reference`. No production data or credentials are copied.
 
+This is completed-stage history, not the active backlog. Test counts and “Next” notes describe their stage at the time; [PLAN.md](PLAN.md) is authoritative for current next work, deferred expansion and release gates. Current supported contracts live in package READMEs linked from [README.md](README.md).
+
 ## Checklist (sequential gates)
 
 - [x] Stage 0: source revision/diff/hashes; dependency, API, migration and behavior inventory.
@@ -81,11 +83,11 @@ Recovery: revert the tracked configuration/documentation changes and restore loc
 
 ## Infrastructure review and preparation completed (2026-10-04)
 
-Changes/decisions: added `INFRASTRUCTURE_REVIEW.md` documenting intended Raid/Pillar/domain/module/Foundry ownership, the reference package inventory, missing local registry capabilities, source-backed extraction risks, and a proposed preparation sequence. Identified undeclared TwoFactor/Auth inheritance, stale application idempotency prerequisites, and the need to reconcile shared Composer/provider ownership before a second Foundry recipe. Distinguished the proven Catalog slice from the older module's permission-management HTTP and idempotency features. Recommended Identity as a future domain candidate after Catalog-bounded preparation; no additional packages, recipes or runtime changes were implemented.
+Changes/decisions: completed an infrastructure review (now consolidated into [README.md](README.md) and the [deferred findings in PLAN.md](PLAN.md#deferred-expansion--not-authorized-by-this-plan)) documenting intended Raid/Pillar/domain/module/Foundry ownership, reference inventory and source-backed extraction risks. Identified undeclared TwoFactor/Auth inheritance, stale application idempotency prerequisites, and shared Composer/provider ownership needs before a second recipe. Distinguished the proven Catalog slice from the older module's permission-management HTTP and idempotency features. Recommended Identity only after scope approval; no additional packages, recipes or runtime changes were implemented.
 
 Validation: Docker package suites passed: Pillar 8 tests / 37 assertions; Catalog 11 / 65; Foundry 11 / 40. Primary consumer passed 9 / 62. Existing selected reference SHA-256 manifest verified successfully; reference revision/status matched the documented baseline. Other reference package test files were inventoried, not executed; production/upgrade fixtures were not rebuilt. No persistent migrations or reference writes occurred. No PHP source changed, so Pint was not required.
 
-Recovery: remove the review document and this stage entry. Next: review shared-file reconciliation/recovery acceptance cases and Catalog authentication integration ownership before widening scope to another foundation.
+Recovery at the time: documentation-only reversal. The then-next shared-file reconciliation/recovery and Catalog authentication preparation was completed in the following stage; it is not current pending work.
 
 
 ## Catalog shared-file and authentication preparation completed (2026-10-04)
@@ -102,8 +104,16 @@ Recovery boundaries: all outputs preflight under the exclusive lock; destination
 
 ## Pillar foundation planning completed
 
-Changes/decisions: added `PILLAR_FOUNDATION_PLAN.md` at the project root. The proposed sequence covers public API inventory and a fresh baseline, Action execution, Eloquent repository correctness, cache safety/write ownership, configuration/module integration, and downstream Catalog acceptance. Each stage has an exit gate. Public API changes require compatibility review; no new domain or speculative framework layer is proposed.
+Changes/decisions: added the Pillar hardening plan, now [PLAN.md](PLAN.md). The proposed sequence covers public API inventory and a fresh baseline, Action execution, Eloquent repository correctness, cache safety/write ownership, configuration/module integration, and downstream Catalog acceptance. Each stage has an exit gate. Public API changes require compatibility review; no new domain or speculative framework layer is proposed.
 
 Validation: reviewed the plan against the current Pillar README and workspace constraints. This is documentation-only work; no PHP, Composer, Artisan, tests, migrations, or reference writes were executed. Runtime hardening stages remain proposed, not completed.
 
 Recovery: remove the plan and this planning entry. Next: inventory Pillar's public API and establish a fresh Docker baseline before prioritizing implementation fixes.
+
+## Root documentation consolidation completed
+
+Changes/decisions: README is the project-intent, architecture and Docker development entrypoint; PLAN is the authoritative future-work document, retaining detailed Pillar gates and unique deferred reference findings/release requirements. Removed the redundant root infrastructure review rather than archiving duplicate prose. Its historical validation remains in this record; its obsolete shared-file finding is explicitly superseded by completed contribution ownership. Preserved AGENTS workspace rules, PROVENANCE attribution/legal details and package-level contracts. Clarified the three consumer roles, unpublished package status, fresh-Laravel schema prerequisites and runtime independence from Foundry.
+
+Validation: reviewed all root Markdown and package READMEs; checked local documentation links, obsolete document references and Git whitespace. Documentation-only: no PHP tooling, tests, services, migrations or reference writes were run. Historical test results above are not fresh validation.
+
+Recovery: revert only this documentation consolidation. No code, application-owned generated files, dependencies or persistent data changed. Next: follow PLAN's Pillar inventory/fresh-baseline gate; expansion remains deferred.

@@ -1,6 +1,6 @@
-# Pillar foundation audit and hardening plan
+# Implementation plan
 
-Status: proposed work; implementation has not started.
+Current next work: **Pillar foundation audit and hardening**, proposed and not yet implemented. The Catalog vertical slice and shared-file/authentication preparation are completed; see [IMPLEMENTATION.md](IMPLEMENTATION.md). Those completed preparation steps are not pending Pillar work. Historical stage numbering in that record is independent of the stages below.
 
 ## Goal
 
@@ -235,3 +235,47 @@ breaking a public API or adding a consequential dependency.
 
 Start with Stage 1: inventory Pillar's public API and establish a fresh Docker
 baseline. Present the prioritized findings before undertaking broad refactoring.
+
+## Deferred expansion — not authorized by this plan
+
+Catalog remains the only supported recipe. The reference inventory found 15 local packages (four Frontier, eleven Raid); nine Raid runtime packages beyond Catalog need separate assessment. Frontier's consumed runtime is consolidated in Pillar; its installers and Raid starter tooling are workflow references, not supported Pillar APIs.
+
+If scope is explicitly widened, Identity is the recommended next foundation, with Catalog as its first consumer; Audit Trail is a subsequent support candidate. These are planning names, not published packages or supported recipes:
+
+| Reference package under `pkgs/raid/` | Candidate | Required acceptance before adoption |
+| --- | --- | --- |
+| `laravel-auth-foundation` | `raid/identity` | Configurable user/guard, users/RBAC/token lifecycle; adopt existing UUID users/admin/Sanctum schema under one owner, never competing migrations; prove token and cached Catalog permission revocation together |
+| `laravel-audit-trail` | `raid/audit-trail` | Actor/entity references, queued recording, transaction rollback, redaction and pruning through Catalog mutations |
+| `laravel-typed-settings` | `raid/typed-settings` | Typed/encrypted storage, defaults and cache invalidation in isolation; no artificial Catalog dependency |
+| `laravel-media-uploads` | `raid/media-uploads` | Upload ownership, validation, attach cleanup and optional Spatie path; first prove repository construction, relations, factories and serialization use intended models |
+| `laravel-notifications-hub` | `raid/notifications` | Differently named user/notifiable model, queued delivery, preferences, ownership and explicit channel integrations |
+| `laravel-two-factor` | `raid/two-factor` | Decide Identity dependency first; challenge expiry, attempt limits, replay prevention and user adapter |
+| `laravel-passport-clients` | `raid/passport-clients` | Concrete machine-client need; distinguish client credentials from human Sanctum tokens and define machine Catalog authorization |
+| `laravel-wallet` | `raid/wallet` | Exact amounts, atomic ledger/balance writes, duplicate references, concurrency and transaction ownership; not complete Billing |
+| `laravel-webhooks` | `raid/webhooks` | Real-worker delivery, duplicate jobs, retries, crash recovery, dead letters and optional circuit-breaker binding |
+
+The starter registry also names circuit breaker, idempotency, order, refund, invoice and outbound logger without matching local package directories. Remote existence and package-name availability were not investigated. Do not create placeholders or advertise install commands. Shared responses, exception rendering, locale, security headers, metrics, health checks and idempotency remain Laravel/application responsibilities until a second real consumer establishes a reusable contract.
+
+### Reference extraction findings to carry forward
+
+These are findings from the **2026-10-04 reference review**, not newly verified defects in lab packages. Source paths below are relative to the read-only reference identified in [PROVENANCE.md](PROVENANCE.md); its untracked planning artifacts were part of the reviewed checkout.
+
+- **Direct dependencies:** Raid actions import `Frontier\Actions\BaseAction` while manifests require only `frontier/repository`; migrated packages must explicitly require Pillar. TwoFactor's `src/Actions/SendTwoFactorCodeAction.php` inherits an Auth Foundation class while its manifest merely suggests Auth. Declare the dependency or isolate the adapter.
+- **Fail-open Catalog:** reference `laravel-catalog-foundation/src/Models/Product.php` can return unfiltered queries for guests, missing adapters and all-null permissions; the reference application User lacks the permission trait. Lab explicit denial states address this. Future Identity wiring must retain denial and separately authorize mutations.
+- **Incomplete idempotency:** reference `app/Http/Middleware/IdempotencyMiddleware.php` calls missing `getMerchant()` and references absent `App\Models\IdempotencyRequest`; no matching root migration was found. Header-free requests bypass the branch. Lookup ignores `expires_at` and does not recheck persisted responses after its ten-second lock. Prove scope, expiry, payload conflicts, concurrent replay and crashes through Catalog requests before claiming support.
+- **Unsafe legacy tooling:** starter `InstallStarterKitCommand` can force migrations; `Integration/Support/FileModifier.php` passes a Closure to `preg_replace` rather than `preg_replace_callback`. Missing files/anchors can silently skip edits while recording success. Port intended effects through verified Foundry plans, never these execution paths.
+- **Unsupported media/model wiring:** the old Catalog media handler targets module Brand/Product subclasses and returns if absent. Lab model overrides/media recipes are unsupported; traits on unused subclasses do not establish integration.
+- **Portability/default adapters:** Notifications' `NotificationRepositoryEloquent` falls back to `App\Models\User`. `WebhooksServiceProvider` unconditionally binds NullCircuitBreaker, not a working breaker. Test alternate model names and custom bindings in both provider orders; optional imports need explicit installation contracts.
+- **Unproven financial/delivery behavior:** no package `*Test.php` files were found for Wallet/Webhooks. Wallet `TransactionData` accepts floats, `AdjustWalletBalanceAction` converts BCMath results to float, and its manifest omits `ext-bcmath`. Returning inside an outer transaction does not imply commit. Webhooks queued transitions need independent delivery/crash proof.
+
+### Gates before any second recipe
+
+Catalog-specific shared-file contribution ownership and the authentication contract are already implemented and tested, as recorded in [IMPLEMENTATION.md](IMPLEMENTATION.md#catalog-shared-file-and-authentication-preparation-completed-2026-10-04) and [Foundry's contract](packages/foundry/README.md). The old whole-file shared-registration finding is superseded, not an outstanding defect.
+
+A second recipe still must prove recipe-distinct records/operation identities without changing existing Catalog identities; reconciliation and recovery must preserve unrelated registrations and customized SKU/resource code. Preserve one users/token schema owner, separate endpoint gates from row visibility, and prove missing-adapter denial and token/grant revocation. Foundry remains Catalog-specific (`installations.catalog`), not a general registry. Extract reusable mechanics only when a second concrete plan requires them; do not introduce a speculative plugin engine.
+
+## Release and external-consumer gates
+
+For each selected package require complete direct dependencies, runtime/tooling separation, an independent Testbench harness, two application configurations wherever customization is promised, deterministic schema ownership, write-free preview, repeat/conflict/interruption/recovery checks, cached consumer behavior, copied `--no-dev` runtime proof and application customization preservation across upgrades.
+
+Before publication or deployment, decide public names/vendor ownership, distribution licensing, version constraints and external-consumer compatibility. Review serialized namespace transitions, existing schema upgrades and production-data migration separately; tooling never executes migrations. Current local `0.1.0`/`0.1.1` release fixtures are historical upgrade evidence, not published versions or a guarantee for arbitrary consumers.
